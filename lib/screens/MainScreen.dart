@@ -12,7 +12,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Native Bridge Test')),
-      body: Container(color: Colors.yellow),
+      body: Container(color: Colors.yellow, child: Center(child: Container())),
     );
   }
 }
