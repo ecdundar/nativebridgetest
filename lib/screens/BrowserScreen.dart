@@ -2,20 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:web_browser/web_browser.dart';
 
 class BrowserScreen extends StatefulWidget {
-  const BrowserScreen({super.key});
+  final String Url;
+  const BrowserScreen({super.key, required this.Url});
 
   @override
-  State<BrowserScreen> createState() => _BrowserScreenState();
+  State<BrowserScreen> createState() => _BrowserScreenState(Url);
 }
 
 class _BrowserScreenState extends State<BrowserScreen> {
+  final String Url;
+  _BrowserScreenState(this.Url);
   @override
   Widget build(BuildContext context) {
     //HTTPS olmasına özellikle tercih edelim.
     return Scaffold(
       appBar: AppBar(title: const Text('Burulaş')),
-      body: const WebBrowser(
-          initialUrl: 'https://www.burulas.com.tr', javascriptEnabled: true),
+      body: WebBrowser(
+        initialUrl: Url,
+        javascriptEnabled: true,
+        interactionSettings: WebBrowserInteractionSettings(
+            topBar: Container(),
+            bottomBar:
+                Container()), //Yukarıdaki adres barı kapatmak için kullandık
+      ),
     );
   }
 }

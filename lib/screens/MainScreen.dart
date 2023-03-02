@@ -10,8 +10,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   void browserAc(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const BrowserScreen()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const BrowserScreen(
+                  Url: 'https://www.burulas.com.tr',
+                )));
   }
 
   @override
