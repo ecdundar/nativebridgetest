@@ -10,6 +10,13 @@ class NativeScreen extends StatefulWidget {
 class _NativeScreenState extends State<NativeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Native Bridge Test')),
+      body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        ElevatedButton(
+            onPressed: () {}, child: const Text('Pil Seviyesini Getir'))
+      ])),
+    );
   }
 }
