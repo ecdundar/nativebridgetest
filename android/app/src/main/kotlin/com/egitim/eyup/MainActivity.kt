@@ -1,13 +1,17 @@
 package com.egitim.eyup
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -38,9 +42,49 @@ class MainActivity: FlutterActivity() {
             if (call.method == "getBluetoothIsOpen") {
                 result.success(getBluetoothIsOpen())
             }
+            if (call.method == "openBluetooth") {
+                result.success(openBluetooth())
+            }
+            if (call.method == "closeBluetooth") {
+                result.success(closeBluetooth())
+            }
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun openBluetooth() : Boolean {
+        var result = false
+        val manager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if (manager.adapter != null) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this,"Bluetooth açma-kapatma yetkisi bulunmuyor.",Toast.LENGTH_SHORT).show();
+                return false
+            }
+           manager.adapter.enable()
+        }
+        return result
+    }
+    @SuppressLint("MissingPermission")
+    private fun closeBluetooth() : Boolean {
+        var result = false
+        val manager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if (manager.adapter != null) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this,"Bluetooth açma-kapatma yetkisi bulunmuyor.",Toast.LENGTH_SHORT).show();
+                return false
+            }
+            manager.adapter.disable()
+        }
+        return result
+    }
     private fun getBluetoothIsOpen() : Boolean {
         var result = false
         val manager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

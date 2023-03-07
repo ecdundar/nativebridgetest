@@ -48,6 +48,36 @@ class _PrinterScreenState extends State<PrinterScreen> {
     setState(() {});
   }
 
+  void openBluetooth() async {
+    try {
+      final bool result = await platformMethod.invokeMethod("openBluetooth");
+      if (result) {
+        EasyLoading.showSuccess("Bluetooth AÇILDI");
+        isBluetoothOpen = true;
+      } else {
+        EasyLoading.showError("Bluetooth status değişmedi");
+      }
+      setState(() {});
+    } on PlatformException catch (e) {
+      EasyLoading.showError(e.message ?? "");
+    }
+  }
+
+  void closeBluetooth() async {
+    try {
+      final bool result = await platformMethod.invokeMethod("closeBluetooth");
+      if (result) {
+        EasyLoading.showSuccess("Bluetooth KAPATILDI");
+        isBluetoothOpen = false;
+      } else {
+        EasyLoading.showError("Bluetooth status değişmedi");
+      }
+      setState(() {});
+    } on PlatformException catch (e) {
+      EasyLoading.showError(e.message ?? "");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +100,24 @@ class _PrinterScreenState extends State<PrinterScreen> {
                         getBluetoothIsOpen();
                       },
                       child: const Text('Bluetooth Açık Mı?')),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                openBluetooth();
+                              },
+                              child: const Text('Bluetooth Aç'))),
+                      const SizedBox(width: 20),
+                      Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                closeBluetooth();
+                              },
+                              child: const Text('Bluetooth Kapat'))),
+                    ],
+                  )
                 ],
               ),
             )));
