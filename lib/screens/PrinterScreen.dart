@@ -85,6 +85,20 @@ class _PrinterScreenState extends State<PrinterScreen> {
     }
   }
 
+  void printLabel() async {
+    try {
+      final bool result = await platformMethod.invokeMethod("printLabel");
+      if (result) {
+        EasyLoading.showSuccess("YAZDIRILDI");
+      } else {
+        EasyLoading.showError("Yazdırma işlemi gerçekleştirilemedi.");
+      }
+      setState(() {});
+    } on PlatformException catch (e) {
+      EasyLoading.showError(e.message ?? "");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +138,13 @@ class _PrinterScreenState extends State<PrinterScreen> {
                               },
                               child: const Text('Bluetooth Kapat'))),
                     ],
-                  )
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        printLabel();
+                      },
+                      child: const Text('Barkod Yazdır')),
+                  const SizedBox(height: 20),
                 ],
               ),
             )));

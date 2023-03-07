@@ -2,19 +2,25 @@ package com.egitim.eyup
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.content.IntentFilter
+import android.bluetooth.BluetoothSocket
+import android.content.*
 import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.util.*
 
 class MainActivity: FlutterActivity() {
 
@@ -48,6 +54,138 @@ class MainActivity: FlutterActivity() {
             if (call.method == "closeBluetooth") {
                 result.success(closeBluetooth())
             }
+            if (call.method == "printLabel") {
+                result.success(printLabel())
+            }
+        }
+    }
+
+    private fun isPermissionsGranted(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    var mBluetoothAdapter : BluetoothAdapter? = null
+    @SuppressLint("MissingPermission")
+    private fun printLabel() : Boolean {
+        var result = false
+
+        if (!isPermissionsGranted(this)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permissions = mutableSetOf(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+                    permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+                }
+                ActivityCompat.requestPermissions(
+                    this, permissions.toTypedArray(), 600
+                )
+                return result
+            }
+        }
+
+        val bluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        mBluetoothAdapter = bluetoothManager.getAdapter()
+
+        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        registerReceiver(receiver, filter)
+
+        if (mBluetoothAdapter!!.isDiscovering()) {
+            mBluetoothAdapter!!.cancelDiscovery();
+        }
+
+        mBluetoothAdapter!!.startDiscovery()
+        result = true
+        return result
+    }
+
+    private val receiver = object : BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
+        override fun onReceive(context: Context, intent: Intent) {
+            val action: String? = intent.action
+            when(action) {
+                BluetoothDevice.ACTION_FOUND -> {
+                    val device: BluetoothDevice =
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
+
+                    val deviceName = device.name ?: "NULL"
+                    val deviceHardwareAddress = device.address ?: "NULL" // MAC address
+
+
+
+                    Log.e("ECD-DEVICENAME",deviceName + " - " + deviceHardwareAddress)
+                    if (deviceName.equals("FLUTTERYAZICI")) {
+
+                        Log.e("ECD",device.uuids.get(0).toString())
+                        if (mBluetoothAdapter!!.isDiscovering()) {
+                            mBluetoothAdapter!!.cancelDiscovery();
+                        }
+                        connect(device)
+                    }
+                }
+            }
+        }
+    }
+
+    var mmSocket: BluetoothSocket? = null
+    var mmDevice: BluetoothDevice? = null
+
+    var mmOutputStream: OutputStream? = null
+    var mmInputStream: InputStream? = null
+    var workerThread: Thread? = null
+
+    @SuppressLint("MissingPermission")
+    @Throws(IOException::class)
+    fun connect(btDevice: BluetoothDevice){
+        try {
+
+            // Standard SerialPortService ID
+            val uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
+            mmSocket = btDevice!!.createRfcommSocketToServiceRecord(uuid)
+            mmSocket!!.connect()
+            mmOutputStream = mmSocket!!.getOutputStream()
+            mmInputStream = mmSocket!!.getInputStream()
+            //beginListenForData()
+            Toast.makeText(this,"Bluetooth Opened",Toast.LENGTH_SHORT).show();
+            sendData()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    @Throws(IOException::class)
+    fun sendData() {
+        try {
+
+            // the text typed by the user
+            var msg: String = "! 0 200 200 321 1\r\n" +
+                    "PW 384\r\n" +
+                    "TONE 0\r\n" +
+                    "SPEED 3\r\n" +
+                    "ON-FEED IGNORE\r\n" +
+                    "NO-PACE\r\n" +
+                    "BAR-SENSE\r\n" +
+                    "BT 0 0 3\r\n" +
+                    "B EAN13 0 20 50 149 42 1234567890128\r\n" +
+                    "T 4 0 84 138 BURULAS\r\n" +
+                    "T 4 0 110 206 EGITIM\r\n" +
+                    "PRINT\r\n"
+            mmOutputStream!!.write(msg.toByteArray())
+
+            // tell the user data were sent
+            Toast.makeText(this,"Data Sent",Toast.LENGTH_SHORT).show();
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 
