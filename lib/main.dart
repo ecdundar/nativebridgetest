@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:nativebridgetest/screens/MainScreen.dart';
 import 'package:nativebridgetest/screens/NativeScreen.dart';
+import 'package:nativebridgetest/screens/PrinterScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,10 +19,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       builder: EasyLoading.init(),
-      initialRoute: '/',
+      initialRoute: '/Printer',
       routes: {
         '/': ((context) => const MainScreen()),
-        '/NativeTest': ((context) => const NativeScreen())
+        '/NativeTest': ((context) => const NativeScreen()),
+        '/Printer': ((context) => const PrinterScreen())
       },
     );
   }
