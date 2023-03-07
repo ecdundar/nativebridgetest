@@ -18,20 +18,33 @@ class _MainScreenState extends State<MainScreen> {
                 )));
   }
 
+  void nativeBridgeScreen(BuildContext context) {
+    Navigator.pushNamed(context, "/NativeTest");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Native Bridge Test')),
-      body: Container(
-        color: Colors.yellow,
-        child: Center(
-            child: ElevatedButton.icon(
-                onPressed: () {
-                  browserAc(context);
-                },
-                icon: const Icon(Icons.open_in_browser),
-                label: const Text('Browser Aç'))),
-      ),
-    );
+        appBar: AppBar(title: const Text('Native Bridge Test')),
+        body: Container(
+          color: Colors.yellow,
+          child: Center(
+            child: Column(children: [
+              ElevatedButton.icon(
+                  onPressed: () {
+                    browserAc(context);
+                  },
+                  icon: const Icon(Icons.open_in_browser),
+                  label: const Text('Browser Aç')),
+              const SizedBox(height: 50),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    nativeBridgeScreen(context);
+                  },
+                  icon: const Icon(Icons.open_in_browser),
+                  label: const Text('Native Bridge Test'))
+            ]),
+          ),
+        ));
   }
 }

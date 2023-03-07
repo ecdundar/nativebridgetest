@@ -12,6 +12,7 @@ class BrowserScreen extends StatefulWidget {
 class _BrowserScreenState extends State<BrowserScreen> {
   final String Url;
   _BrowserScreenState(this.Url);
+  WebBrowserController? controller;
   @override
   Widget build(BuildContext context) {
     //HTTPS olmasına özellikle tercih edelim.
@@ -24,6 +25,10 @@ class _BrowserScreenState extends State<BrowserScreen> {
             topBar: Container(),
             bottomBar:
                 Container()), //Yukarıdaki adres barı kapatmak için kullandık
+        onCreated: (controller) {
+          //Diğer işlemler için controller nesnesini dışarıya alıyoruz.
+          this.controller = controller;
+        },
       ),
     );
   }

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.nativebridgetest">
+    package="com.egitim.eyup">
    <application
         android:label="nativebridgetest"
         android:name="${applicationName}"
