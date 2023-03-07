@@ -26,6 +26,14 @@ class _NativeScreenState extends State<NativeScreen> {
     });
   }
 
+  void showNativeToast() async {
+    try {
+      await platformMethod.invokeMethod("showToast");
+    } on PlatformException catch (e) {
+      print(e.message ?? "");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +46,13 @@ class _NativeScreenState extends State<NativeScreen> {
             onPressed: () {
               getBatteryLevel();
             },
-            child: const Text('Pil Seviyesini Getir'))
+            child: const Text('Pil Seviyesini Getir')),
+        const SizedBox(height: 10),
+        ElevatedButton(
+            onPressed: () {
+              showNativeToast();
+            },
+            child: const Text('Toast Goster'))
       ])),
     );
   }

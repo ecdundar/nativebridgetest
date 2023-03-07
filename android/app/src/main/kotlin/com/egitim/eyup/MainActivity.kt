@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import android.widget.Toast
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -24,6 +25,10 @@ class MainActivity: FlutterActivity() {
                 } else {
                     result.error("EXCEPTION","Pil durumu okunamadı.","Detay bilgiler")
                 }
+            }
+            if (call.method == "showToast") {
+                Toast.makeText(applicationContext,"Native Toast Example",Toast.LENGTH_SHORT).show()
+                result.success(true)
             }
         }
     }
