@@ -1,5 +1,6 @@
 package com.egitim.eyup
 
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -31,7 +32,19 @@ class MainActivity: FlutterActivity() {
                 Toast.makeText(applicationContext,mesaj,Toast.LENGTH_SHORT).show()
                 result.success(true)
             }
+            if (call.method == "checkBluetooth") {
+                result.success(checkBluetooth())
+            }
         }
+    }
+
+    private fun checkBluetooth() : Boolean {
+        var result = false
+        val manager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if (manager.adapter != null) {
+            result = true
+        }
+        return result
     }
 
     private fun getBatteryLevel() : Int {
