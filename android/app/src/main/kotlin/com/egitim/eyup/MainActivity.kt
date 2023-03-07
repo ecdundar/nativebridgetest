@@ -27,7 +27,8 @@ class MainActivity: FlutterActivity() {
                 }
             }
             if (call.method == "showToast") {
-                Toast.makeText(applicationContext,"Native Toast Example",Toast.LENGTH_SHORT).show()
+                val mesaj : String? = call.argument("Mesaj")
+                Toast.makeText(applicationContext,mesaj,Toast.LENGTH_SHORT).show()
                 result.success(true)
             }
         }

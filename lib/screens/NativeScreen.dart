@@ -28,7 +28,8 @@ class _NativeScreenState extends State<NativeScreen> {
 
   void showNativeToast() async {
     try {
-      await platformMethod.invokeMethod("showToast");
+      await platformMethod
+          .invokeMethod("showToast", {"Mesaj": "Deneme Mesajı From Flutter"});
     } on PlatformException catch (e) {
       print(e.message ?? "");
     }
