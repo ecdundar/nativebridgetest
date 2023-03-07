@@ -35,7 +35,19 @@ class MainActivity: FlutterActivity() {
             if (call.method == "checkBluetooth") {
                 result.success(checkBluetooth())
             }
+            if (call.method == "getBluetoothIsOpen") {
+                result.success(getBluetoothIsOpen())
+            }
         }
+    }
+
+    private fun getBluetoothIsOpen() : Boolean {
+        var result = false
+        val manager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if (manager.adapter != null) {
+            result = manager.adapter.isEnabled
+        }
+        return result
     }
 
     private fun checkBluetooth() : Boolean {
