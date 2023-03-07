@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PrinterScreen extends StatefulWidget {
   const PrinterScreen({super.key});
@@ -50,6 +51,12 @@ class _PrinterScreenState extends State<PrinterScreen> {
 
   void openBluetooth() async {
     try {
+      if (await Permission.bluetooth.isGranted == false) {
+        await Permission.bluetooth.request();
+      }
+      if (await Permission.bluetoothConnect.isGranted == false) {
+        await Permission.bluetoothConnect.request();
+      }
       final bool result = await platformMethod.invokeMethod("openBluetooth");
       if (result) {
         EasyLoading.showSuccess("Bluetooth AÇILDI");
