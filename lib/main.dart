@@ -9,6 +9,7 @@ import 'package:nativebridgetest/screens/NativeScreen.dart';
 import 'package:nativebridgetest/screens/PrinterScreen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final themeStr =
       await rootBundle.loadString('lib/assets/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
