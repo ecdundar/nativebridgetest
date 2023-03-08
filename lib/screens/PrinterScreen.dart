@@ -19,7 +19,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   //Android 29 sonrası bluetooth cihazlara erişimde Konum un hen açık hende uygulamanın konuma yetkili olması gerekiyor.
   static const platformMethod = MethodChannel("flutter.burulas/battery");
   static const platformEvent = EventChannel("flutter.burulas/eventChannel");
-  static const platformEvent = EventChannel("flutter.burulas/eventChannel2");
+  static const platformEvent2 = EventChannel("flutter.burulas/eventChannel2");
 
   bool isBluetoothAvailable = false;
   bool isBluetoothOpen = false;
