@@ -150,8 +150,13 @@ class _PrinterScreenState extends State<PrinterScreen> {
     EasyLoading.show(status: "Cihazlar taranıyor");
     _streamSubscriptionBluetoothDiscovery =
         bluetoothDiscoveryEvent.receiveBroadcastStream().listen((value) {
-      lastPrinterName = value;
-      print(value);
+      if (value == "###FINISHED###") {
+        EasyLoading.dismiss();
+        _streamSubscription.cancel();
+      } else {
+        lastPrinterName = value;
+        print(value);
+      }
     });
   }
 

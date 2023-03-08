@@ -219,6 +219,9 @@ class MainActivity: FlutterActivity() {
         override fun onReceive(context: Context, intent: Intent) {
             val action: String? = intent.action
             when(action) {
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    bluetoothDiscoveryEvents?.success("###FINISHED###")
+                }
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
@@ -228,7 +231,7 @@ class MainActivity: FlutterActivity() {
 
                     if ((device?.uuids?.size ?: 0)> 0) {
                         if (device.uuids.get(0).toString() == "00001101-0000-1000-8000-00805f9b34fb"){
-                            bluetoothDiscoveryEvents?.success(deviceName)
+                            bluetoothDiscoveryEvents?.success(deviceName + "|" + device.address)
                         }
                     }
 
