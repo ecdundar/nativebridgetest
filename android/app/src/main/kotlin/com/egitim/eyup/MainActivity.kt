@@ -28,11 +28,12 @@ class MainActivity: FlutterActivity() {
 
     private val METHODCHANNELNAME = "flutter.burulas/battery"
     private val EVENTCHANNELNAME = "flutter.burulas/eventChannel"
+    private val EVENTCHANNELNAME2 = "flutter.burulas/eventChannel2"
 
     private var attachEvent: EventChannel.EventSink? = null
     private var count = 1
     private var handler: Handler? = null
-    private val runnable: Runnable = object : Runnable {
+    private val numberTask100: Runnable = object : Runnable {
         override fun run() {
             val TOTAL_COUNT = 100
             if (count > TOTAL_COUNT) {
@@ -43,28 +44,73 @@ class MainActivity: FlutterActivity() {
             }
             count++
             handler!!.postDelayed(this, 200)
+            deneme()
+        }
+        private fun deneme() {
+
+        }
+    }
+
+
+
+    private var attachEvent1000: EventChannel.EventSink? = null
+    private var count1000 = 1
+    private var handler1000: Handler? = null
+    private val numberTask1000: Runnable = object : Runnable {
+        override fun run() {
+            val TOTAL_COUNT = 1000
+            if (count1000 > TOTAL_COUNT) {
+                attachEvent1000!!.endOfStream()
+            } else {
+                val percentage = count1000.toDouble() / TOTAL_COUNT
+                attachEvent1000!!.success(percentage)
+            }
+            count1000++
+            handler1000!!.postDelayed(this, 10)
         }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+         //EventChanneld i register ediyoruz,
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTCHANNELNAME2).setStreamHandler(
+            object: EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                    attachEvent1000 = events
+                    count1000 = 1
+                    handler1000 = Handler()
+                    numberTask1000.run()
+                }
+
+                override fun onCancel(arguments: Any?) {
+                    handler1000!!.removeCallbacks(numberTask100)
+                    handler1000 = null
+                    count1000 = 1
+                    attachEvent1000 = null
+                }
+            }
+        )
+
+        //EventChanneld i register ediyoruz,
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTCHANNELNAME).setStreamHandler(
             object: EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                     attachEvent = events
                     count = 1
                     handler = Handler()
-                    runnable.run()
+                    numberTask100.run()
                 }
 
                 override fun onCancel(arguments: Any?) {
-                    handler!!.removeCallbacks(runnable)
+                    handler!!.removeCallbacks(numberTask100)
                     handler = null
                     count = 1
                     attachEvent = null
                 }
             }
         )
+
+        //MethodChannel i register ediyoruz
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHODCHANNELNAME).setMethodCallHandler { call, result ->
             if (call.method == "getBatteryLevel") {
                 val level = getBatteryLevel()

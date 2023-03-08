@@ -19,6 +19,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   //Android 29 sonrası bluetooth cihazlara erişimde Konum un hen açık hende uygulamanın konuma yetkili olması gerekiyor.
   static const platformMethod = MethodChannel("flutter.burulas/battery");
   static const platformEvent = EventChannel("flutter.burulas/eventChannel");
+  static const platformEvent = EventChannel("flutter.burulas/eventChannel2");
 
   bool isBluetoothAvailable = false;
   bool isBluetoothOpen = false;
@@ -30,6 +31,10 @@ class _PrinterScreenState extends State<PrinterScreen> {
   void startListener() {
     _streamSubscription =
         platformEvent.receiveBroadcastStream().listen(listenStream);
+
+    _streamSubscription.onDone(() {
+      print('işlem bitti');
+    });
   }
 
   //Event Channel Start listener sonucunu dinleyici fonksiyonumuz
@@ -41,6 +46,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
 
   //Event Channel İptal Et
   void cancelStream() {
+    print('cancelStream');
     _streamSubscription.cancel();
     setState(() {
       _currentValue = 0;
