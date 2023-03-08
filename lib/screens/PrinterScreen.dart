@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -147,7 +148,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
 
   String lastPrinterName = "";
   List<String> _ListPrinters = List.empty(growable: true);
-  void printLabelWithSelection() async {
+  void printLabelWithSelection(BuildContext context) async {
     EasyLoading.show(status: "Cihazlar taranıyor");
     _ListPrinters.clear();
     _streamSubscriptionBluetoothDiscovery =
@@ -159,13 +160,43 @@ class _PrinterScreenState extends State<PrinterScreen> {
           EasyLoading.showError("Bluetooth yazıcı bulunamadı");
         } else if (_ListPrinters.length == 1) {
           //direkt yazıcıya bağlan
-        } else {}
+        } else {
+          showPrinterActionSheet(context);
+        }
       } else {
+        _ListPrinters.add(value);
         _ListPrinters.add(value);
         lastPrinterName = value;
         print(value);
       }
     });
+  }
+
+  void showPrinterActionSheet(BuildContext ctx) {
+    showCupertinoModalPopup(
+        context: ctx,
+        builder: (_) => CupertinoActionSheet(
+              message: Center(
+                child: Container(
+                    width: 100,
+                    height: 50,
+                    child: const Text('Yazıcı Seçiniz')),
+              ),
+              actions: _ListPrinters.map(
+                (e) => CupertinoActionSheetAction(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(e)),
+              ).toList(),
+              cancelButton: CupertinoActionSheetAction(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text(
+                  'Vazgeç',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ));
   }
 
   @override
@@ -218,7 +249,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                       onPressed: () {
-                        printLabelWithSelection();
+                        printLabelWithSelection(context);
                       },
                       child: const Text('Barkod Seçimli Yazdır')),
                   const SizedBox(height: 20),
