@@ -158,6 +158,11 @@ class MainActivity: FlutterActivity() {
             if (call.method == "printLabel") {
                 result.success(printLabel())
             }
+            if (call.method == "connectToPrinter") {
+                val printerName : String? = call.argument<String?>("printerName").toString().split('|')[1].toString()
+                Toast.makeText(applicationContext,printerName,Toast.LENGTH_SHORT).show()
+                result.success(true)
+            }
         }
     }
 

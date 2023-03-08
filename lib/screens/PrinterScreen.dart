@@ -18,6 +18,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   //Android 30 öncesi Bluetooth  erişimi için MainActivity.kt de yetki farklılıkları ile ilgili düzenleme yaptık.
   //Android 30 sonrası BLUETOOTH_SCAN, BLUETOOTH_CONNECT, öncesi BLUETOOTH ve BLUETOOTH_ADMIN yetkileri kullanıldı.
   //Android 29 sonrası bluetooth cihazlara erişimde Konum un hen açık hende uygulamanın konuma yetkili olması gerekiyor.
+  //MethodChannel metod void çağırmak için kullanılıyor, event channel asenkron event çağrısı için kullanılyıor.
   static const platformMethod = MethodChannel("flutter.burulas/battery");
   static const platformEvent = EventChannel("flutter.burulas/eventChannel");
   static const platformEvent2 = EventChannel("flutter.burulas/eventChannel2");
@@ -159,12 +160,11 @@ class _PrinterScreenState extends State<PrinterScreen> {
         if (_ListPrinters.isEmpty) {
           EasyLoading.showError("Bluetooth yazıcı bulunamadı");
         } else if (_ListPrinters.length == 1) {
-          //direkt yazıcıya bağlan
+          connectToPrinter(_ListPrinters.first);
         } else {
           showPrinterActionSheet(context);
         }
       } else {
-        _ListPrinters.add(value);
         _ListPrinters.add(value);
         lastPrinterName = value;
         print(value);
@@ -186,6 +186,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
                 (e) => CupertinoActionSheetAction(
                     onPressed: () {
                       Navigator.of(ctx).pop();
+                      connectToPrinter(e);
                     },
                     child: Text(e)),
               ).toList(),
@@ -197,6 +198,11 @@ class _PrinterScreenState extends State<PrinterScreen> {
                 ),
               ),
             ));
+  }
+
+  void connectToPrinter(String printerName) async {
+    final bool result = await platformMethod
+        .invokeMethod("connectToPrinter", {"printerName": printerName});
   }
 
   @override
