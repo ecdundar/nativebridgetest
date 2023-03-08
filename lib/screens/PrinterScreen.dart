@@ -201,8 +201,21 @@ class _PrinterScreenState extends State<PrinterScreen> {
   }
 
   void connectToPrinter(String printerNameAndAdress) async {
-    final bool result = await platformMethod.invokeMethod(
-        "connectToPrinter", {"printerNameAndAdress": printerNameAndAdress});
+    // ignore: prefer_interpolation_to_compose_strings
+    var metin = "! 0 200 200 321 1\r\n" +
+        "PW 384\r\n" +
+        "TONE 0\r\n" +
+        "SPEED 3\r\n" +
+        "ON-FEED IGNORE\r\n" +
+        "NO-PACE\r\n" +
+        "BAR-SENSE\r\n" +
+        "BT 0 0 3\r\n" +
+        "B EAN13 0 20 50 149 42 1234567890128\r\n" +
+        "T 4 0 84 138 BURULAS\r\n" +
+        "T 4 0 110 206 EGITIM\r\n" +
+        "PRINT\r\n";
+    final bool result = await platformMethod.invokeMethod("connectToPrinter",
+        {"printerNameAndAdress": printerNameAndAdress, "metin": metin});
   }
 
   @override

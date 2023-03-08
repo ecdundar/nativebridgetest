@@ -57,6 +57,7 @@ class MainActivity: FlutterActivity() {
     private var attachEvent1000: EventChannel.EventSink? = null
     private var count1000 = 1
     private var handler1000: Handler? = null
+    private var barkodMetin: String = ""
     private val numberTask1000: Runnable = object : Runnable {
         override fun run() {
             val TOTAL_COUNT = 1000
@@ -160,6 +161,7 @@ class MainActivity: FlutterActivity() {
             }
             if (call.method == "connectToPrinter") {
                 val printerNameAndAdress : String? = call.argument<String?>("printerNameAndAdress").toString().split('|')[1].toString()
+                barkodMetin = call.argument("Metin")
                 Toast.makeText(applicationContext,printerNameAndAdress,Toast.LENGTH_SHORT).show()
                 val bDevice : BluetoothDevice = mBluetoothAdapter!!.getRemoteDevice(printerNameAndAdress)
                 connect(bDevice)
@@ -287,7 +289,7 @@ class MainActivity: FlutterActivity() {
         try {
 
             // the text typed by the user
-            var msg: String = "! 0 200 200 321 1\r\n" +
+            /*var msg: String = "! 0 200 200 321 1\r\n" +
                     "PW 384\r\n" +
                     "TONE 0\r\n" +
                     "SPEED 3\r\n" +
@@ -298,8 +300,8 @@ class MainActivity: FlutterActivity() {
                     "B EAN13 0 20 50 149 42 1234567890128\r\n" +
                     "T 4 0 84 138 BURULAS\r\n" +
                     "T 4 0 110 206 EGITIM\r\n" +
-                    "PRINT\r\n"
-            mmOutputStream!!.write(msg.toByteArray())
+                    "PRINT\r\n"*/
+            mmOutputStream!!.write(barkodMetin.toByteArray())
 
             // tell the user data were sent
             Toast.makeText(this,"Data Sent",Toast.LENGTH_SHORT).show();
