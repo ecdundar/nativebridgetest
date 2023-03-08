@@ -1,23 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:json_theme/json_theme.dart';
 import 'package:nativebridgetest/screens/MainScreen.dart';
 import 'package:nativebridgetest/screens/NativeScreen.dart';
 import 'package:nativebridgetest/screens/PrinterScreen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  final themeStr =
+      await rootBundle.loadString('lib/assets/appainter_theme.json');
+  final themeJson = jsonDecode(themeStr);
+  final theme = ThemeDecoder.decodeThemeData(themeJson)!;
+
+  runApp(MyApp(theme: theme));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ThemeData theme;
+  const MyApp({Key? key, required this.theme}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Native Bridge Test',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: theme,
       builder: EasyLoading.init(),
       initialRoute: '/Printer',
       routes: {
