@@ -12,7 +12,11 @@ class PrinterScreen extends StatefulWidget {
 
 class _PrinterScreenState extends State<PrinterScreen> {
   //Channel ismi native tarafla aynı olmalı
+  //Android 30 öncesi Bluetooth  erişimi için MainActivity.kt de yetki farklılıkları ile ilgili düzenleme yaptık.
+  //Android 30 sonrası BLUETOOTH_SCAN, BLUETOOTH_CONNECT, öncesi BLUETOOTH ve BLUETOOTH_ADMIN yetkileri kullanıldı.
+  //Android 29 sonrası bluetooth cihazlara erişimde Konum un hen açık hende uygulamanın konuma yetkili olması gerekiyor.
   static const platformMethod = MethodChannel("flutter.burulas/battery");
+  static const platformEvent = EventChannel("flutter.burulas/battery");
   bool isBluetoothAvailable = false;
   bool isBluetoothOpen = false;
 
