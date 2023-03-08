@@ -200,9 +200,9 @@ class _PrinterScreenState extends State<PrinterScreen> {
             ));
   }
 
-  void connectToPrinter(String printerName) async {
-    final bool result = await platformMethod
-        .invokeMethod("connectToPrinter", {"printerName": printerName});
+  void connectToPrinter(String printerNameAndAdress) async {
+    final bool result = await platformMethod.invokeMethod(
+        "connectToPrinter", {"printerNameAndAdress": printerNameAndAdress});
   }
 
   @override
