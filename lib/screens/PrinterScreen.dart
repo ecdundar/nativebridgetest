@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -16,9 +18,40 @@ class _PrinterScreenState extends State<PrinterScreen> {
   //Android 30 sonrası BLUETOOTH_SCAN, BLUETOOTH_CONNECT, öncesi BLUETOOTH ve BLUETOOTH_ADMIN yetkileri kullanıldı.
   //Android 29 sonrası bluetooth cihazlara erişimde Konum un hen açık hende uygulamanın konuma yetkili olması gerekiyor.
   static const platformMethod = MethodChannel("flutter.burulas/battery");
-  static const platformEvent = EventChannel("flutter.burulas/battery");
+  static const platformEvent = EventChannel("flutter.burulas/eventChannel");
+
   bool isBluetoothAvailable = false;
   bool isBluetoothOpen = false;
+
+  late StreamSubscription _streamSubscription;
+  double _currentValue = 0.0;
+
+  //Start Listener ile Event Channel i başlatıyoruz
+  void startListener() {
+    _streamSubscription =
+        platformEvent.receiveBroadcastStream().listen(listenStream);
+  }
+
+  //Event Channel Start listener sonucunu dinleyici fonksiyonumuz
+  void listenStream(value) {
+    setState(() {
+      _currentValue = value;
+    });
+  }
+
+  //Event Channel İptal Et
+  void cancelStream() {
+    _streamSubscription.cancel();
+    setState(() {
+      _currentValue = 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startListener();
+  }
 
   void checkBluetooth() async {
     try {
@@ -149,6 +182,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
                       },
                       child: const Text('Barkod Yazdır')),
                   const SizedBox(height: 20),
+                  Text(_currentValue.toString()),
                 ],
               ),
             )));

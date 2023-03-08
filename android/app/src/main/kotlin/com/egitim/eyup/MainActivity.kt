@@ -10,12 +10,14 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import java.io.IOException
 import java.io.InputStream
@@ -25,9 +27,44 @@ import java.util.*
 class MainActivity: FlutterActivity() {
 
     private val METHODCHANNELNAME = "flutter.burulas/battery"
+    private val EVENTCHANNELNAME = "flutter.burulas/eventChannel"
+
+    private var attachEvent: EventChannel.EventSink? = null
+    private var count = 1
+    private var handler: Handler? = null
+    private val runnable: Runnable = object : Runnable {
+        override fun run() {
+            val TOTAL_COUNT = 100
+            if (count > TOTAL_COUNT) {
+                attachEvent!!.endOfStream()
+            } else {
+                val percentage = count.toDouble() / TOTAL_COUNT
+                attachEvent!!.success(percentage)
+            }
+            count++
+            handler!!.postDelayed(this, 200)
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTCHANNELNAME).setStreamHandler(
+            object: EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                    attachEvent = events
+                    count = 1
+                    handler = Handler()
+                    runnable.run()
+                }
+
+                override fun onCancel(arguments: Any?) {
+                    handler!!.removeCallbacks(runnable)
+                    handler = null
+                    count = 1
+                    attachEvent = null
+                }
+            }
+        )
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHODCHANNELNAME).setMethodCallHandler { call, result ->
             if (call.method == "getBatteryLevel") {
                 val level = getBatteryLevel()
