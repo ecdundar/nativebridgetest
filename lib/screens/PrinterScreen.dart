@@ -149,7 +149,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   void printLabelWithSelection() async {
     EasyLoading.show(status: "Cihazlar taranıyor");
     _streamSubscriptionBluetoothDiscovery =
-        platformEvent.receiveBroadcastStream().listen((value) {
+        bluetoothDiscoveryEvent.receiveBroadcastStream().listen((value) {
       lastPrinterName = value;
       print(value);
     });
