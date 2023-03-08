@@ -152,7 +152,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
         bluetoothDiscoveryEvent.receiveBroadcastStream().listen((value) {
       if (value == "###FINISHED###") {
         EasyLoading.dismiss();
-        _streamSubscription.cancel();
+        _streamSubscriptionBluetoothDiscovery.cancel();
       } else {
         lastPrinterName = value;
         print(value);
