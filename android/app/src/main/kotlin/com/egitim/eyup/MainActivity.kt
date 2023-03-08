@@ -29,6 +29,7 @@ class MainActivity: FlutterActivity() {
     private val METHODCHANNELNAME = "flutter.burulas/battery"
     private val EVENTCHANNELNAME = "flutter.burulas/eventChannel"
     private val EVENTCHANNELNAME2 = "flutter.burulas/eventChannel2"
+    private val EVENTBLUETOOTHDISCOVERY = "flutter.burulas/eventBluetoothDiscovery"
 
     private var attachEvent: EventChannel.EventSink? = null
     private var count = 1
@@ -70,8 +71,25 @@ class MainActivity: FlutterActivity() {
         }
     }
 
+    private var bluetoothDiscoveryEvents: EventChannel.EventSink? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        //EventChanneld i register ediyoruz,
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTBLUETOOTHDISCOVERY).setStreamHandler(
+            object: EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                    bluetoothDiscoveryEvents = events
+                    printLabel()
+                }
+
+                override fun onCancel(arguments: Any?) {
+
+                }
+            }
+        )
+
+
          //EventChanneld i register ediyoruz,
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENTCHANNELNAME2).setStreamHandler(
             object: EventChannel.StreamHandler {
@@ -182,7 +200,9 @@ class MainActivity: FlutterActivity() {
         val bluetoothManager = this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.getAdapter()
 
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        val filter = IntentFilter()
+        filter.addAction(BluetoothDevice.ACTION_FOUND)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         registerReceiver(receiver, filter)
 
         if (mBluetoothAdapter!!.isDiscovering()) {
@@ -206,9 +226,10 @@ class MainActivity: FlutterActivity() {
                     val deviceName = device.name ?: "NULL"
                     val deviceHardwareAddress = device.address ?: "NULL" // MAC address
 
+                    bluetoothDiscoveryEvents?.success(deviceName)
 
 
-                    Log.e("ECD-DEVICENAME",deviceName + " - " + deviceHardwareAddress)
+                    /*Log.e("ECD-DEVICENAME",deviceName + " - " + deviceHardwareAddress)
                     if (deviceName.equals("FLUTTERYAZICI")) {
 
                         Log.e("ECD",device.uuids.get(0).toString())
@@ -216,7 +237,7 @@ class MainActivity: FlutterActivity() {
                             mBluetoothAdapter!!.cancelDiscovery();
                         }
                         connect(device)
-                    }
+                    }*/
                 }
             }
         }

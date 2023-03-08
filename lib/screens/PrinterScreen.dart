@@ -20,11 +20,14 @@ class _PrinterScreenState extends State<PrinterScreen> {
   static const platformMethod = MethodChannel("flutter.burulas/battery");
   static const platformEvent = EventChannel("flutter.burulas/eventChannel");
   static const platformEvent2 = EventChannel("flutter.burulas/eventChannel2");
+  static const bluetoothDiscoveryEvent =
+      EventChannel("flutter.burulas/eventBluetoothDiscovery");
 
   bool isBluetoothAvailable = false;
   bool isBluetoothOpen = false;
 
   late StreamSubscription _streamSubscription;
+  late StreamSubscription _streamSubscriptionBluetoothDiscovery;
   double _currentValue = 0.0;
 
   //Start Listener ile Event Channel i başlatıyoruz
@@ -56,7 +59,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   @override
   void initState() {
     super.initState();
-    startListener();
+    //startListener();
   }
 
   void checkBluetooth() async {
@@ -142,6 +145,16 @@ class _PrinterScreenState extends State<PrinterScreen> {
     }
   }
 
+  String lastPrinterName = "";
+  void printLabelWithSelection() async {
+    EasyLoading.show(status: "Cihazlar taranıyor");
+    _streamSubscriptionBluetoothDiscovery =
+        platformEvent.receiveBroadcastStream().listen((value) {
+      lastPrinterName = value;
+      print(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,6 +202,14 @@ class _PrinterScreenState extends State<PrinterScreen> {
                       child: const Text('Barkod Yazdır')),
                   const SizedBox(height: 20),
                   Text(_currentValue.toString()),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                      onPressed: () {
+                        printLabelWithSelection();
+                      },
+                      child: const Text('Barkod Seçimli Yazdır')),
+                  const SizedBox(height: 20),
+                  Text(lastPrinterName.toString()),
                 ],
               ),
             )));
