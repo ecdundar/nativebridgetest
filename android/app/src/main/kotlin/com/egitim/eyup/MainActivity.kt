@@ -226,8 +226,11 @@ class MainActivity: FlutterActivity() {
                     val deviceName = device.name ?: "NULL"
                     val deviceHardwareAddress = device.address ?: "NULL" // MAC address
 
-                    bluetoothDiscoveryEvents?.success(deviceName)
-
+                    if ((device?.uuids?.size ?: 0)> 0) {
+                        if (device.uuids.get(0).toString() == "00001101-0000-1000-8000-00805f9b34fb"){
+                            bluetoothDiscoveryEvents?.success(deviceName)
+                        }
+                    }
 
                     /*Log.e("ECD-DEVICENAME",deviceName + " - " + deviceHardwareAddress)
                     if (deviceName.equals("FLUTTERYAZICI")) {
