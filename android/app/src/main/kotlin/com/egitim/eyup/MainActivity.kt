@@ -161,7 +161,7 @@ class MainActivity: FlutterActivity() {
             }
             if (call.method == "connectToPrinter") {
                 val printerNameAndAdress : String? = call.argument<String?>("printerNameAndAdress").toString().split('|')[1].toString()
-                barkodMetin = call.argument("Metin")
+                barkodMetin = call.argument<String>("Metin").toString()
                 Toast.makeText(applicationContext,printerNameAndAdress,Toast.LENGTH_SHORT).show()
                 val bDevice : BluetoothDevice = mBluetoothAdapter!!.getRemoteDevice(printerNameAndAdress)
                 connect(bDevice)

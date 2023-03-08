@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -215,6 +216,8 @@ class _PrinterScreenState extends State<PrinterScreen> {
         "T 4 0 84 138 BURULAS\r\n" +
         "T 4 0 110 206 EGITIM\r\n" +
         "PRINT\r\n";
+    //Metni Base64 e çevirme
+    metin = base64Encode(utf8.encode(metin));
     final bool result = await platformMethod.invokeMethod("connectToPrinter",
         {"printerNameAndAdress": printerNameAndAdress, "metin": metin});
   }
