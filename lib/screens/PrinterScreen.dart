@@ -201,6 +201,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   }
 
   void connectToPrinter(String printerNameAndAdress) async {
+    //BARKOD KODUNU TAŞINIRKEN BASE64 OLMASINI TERCİH EDELİM.
     // ignore: prefer_interpolation_to_compose_strings
     var metin = "! 0 200 200 321 1\r\n" +
         "PW 384\r\n" +

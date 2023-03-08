@@ -287,7 +287,7 @@ class MainActivity: FlutterActivity() {
     @Throws(IOException::class)
     fun sendData() {
         try {
-
+            //BARKOD KODUNU TAŞINIRKEN BASE64 OLMASINI TERCİH EDELİM.
             // the text typed by the user
             /*var msg: String = "! 0 200 200 321 1\r\n" +
                     "PW 384\r\n" +
