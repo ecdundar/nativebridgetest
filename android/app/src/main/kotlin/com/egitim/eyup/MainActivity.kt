@@ -269,6 +269,10 @@ class MainActivity: FlutterActivity() {
 
             // tell the user data were sent
             Toast.makeText(this,"Data Sent",Toast.LENGTH_SHORT).show();
+
+            Handler().postDelayed({
+                mmSocket!!.close()
+            }, 5000)
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
