@@ -146,14 +146,22 @@ class _PrinterScreenState extends State<PrinterScreen> {
   }
 
   String lastPrinterName = "";
+  List<String> _ListPrinters = List.empty(growable: true);
   void printLabelWithSelection() async {
     EasyLoading.show(status: "Cihazlar taranıyor");
+    _ListPrinters.clear();
     _streamSubscriptionBluetoothDiscovery =
         bluetoothDiscoveryEvent.receiveBroadcastStream().listen((value) {
       if (value == "###FINISHED###") {
         EasyLoading.dismiss();
         _streamSubscriptionBluetoothDiscovery.cancel();
+        if (_ListPrinters.isEmpty) {
+          EasyLoading.showError("Bluetooth yazıcı bulunamadı");
+        } else if (_ListPrinters.length == 1) {
+          //direkt yazıcıya bağlan
+        } else {}
       } else {
+        _ListPrinters.add(value);
         lastPrinterName = value;
         print(value);
       }
